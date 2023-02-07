@@ -1,0 +1,83 @@
+
+{
+    "module_count":11,
+    "module_list":[
+        {
+        "name":"M0",
+        "dim":[4,2],
+        "delay":5,
+        "beta": 0.25,
+        "next":-1
+        },
+        {
+        "name":"M1",
+        "dim":[3,6],
+        "delay":2,
+        "beta": 0.25,
+        "next":0
+        },
+        {
+        "name":"M2",
+        "dim":[2,4],
+        "delay":6,
+        "beta": 0.25,
+        "next": 0
+        },
+        {
+        "name":"M3",
+        "dim":[1,5],
+        "delay":2,
+        "beta": 0.25,
+        "next": 1
+        },
+        {
+        "name":"M4",
+        "dim":[6,7],
+        "delay":3,
+        "beta": 0.25,
+        "next": 1
+        },
+        {
+        "name":"M5",
+        "dim":[4,2],
+        "delay":5,
+        "beta": 0.25,
+        "next": 2
+        },
+        {
+        "name":"M6",
+        "dim":[6,3],
+        "delay":3,
+        "beta": 0.25,
+        "next": 2
+        },
+        {
+        "name":"M7",
+        "dim":[7,1],
+        "delay":3,
+        "beta": 0.25,
+        "next": 3
+        },
+        {
+        "name":"M8",
+        "dim":[7,4],
+        "delay":2,
+        "beta": 0.25,
+        "next": 3
+        },
+        {
+        "name":"M9",
+        "dim":[5,4],
+        "delay":6,
+        "beta": 0.25,
+        "next": 4
+        },
+        {
+        "name":"M10",
+        "dim":[6,7],
+        "delay":6,
+        "beta": 0.25,
+        "next": 4
+        }
+    ]
+}

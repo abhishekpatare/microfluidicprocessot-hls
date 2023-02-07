@@ -2,7 +2,7 @@ import heapq
 import math
 
 class Module:
-    def __init__(self, name, dim, idx, delay, s_window):
+    def __init__(self, name, dim, idx, delay, beta):
         self.start_t = None
         self.etd = None
         self.name = name
@@ -10,7 +10,7 @@ class Module:
         self.dim = dim
         self.delay = delay
         self.end_t = None
-        self.s_window=s_window
+        self.beta = beta
 
     def add_etd(self, etd):
         self.etd = etd
@@ -21,14 +21,15 @@ class Module:
     def area(self):
         return self.dim[0]*self.dim[1]
 
-    def s_window_size(self):
-        return self.s_window[0]*self.s_window[1]
+    def storage(self):
+        return math.ceil(self.dim[0]*self.dim[1]*self.beta)
 
     def __lt__(self, other):
         return self.etd>other.etd
     
     def __str__(self):
         mod = {}
+        mod['idx'] = self.idx,
         mod['name'] = self.name
         mod['dim'] = self.dim
         mod['delay'] = self.delay
@@ -79,17 +80,18 @@ def _schedule(u, prev_mod, adj_t, mod_tab, Na, max_t, M, S, next, t_curr):
     prev_mod = module previous to critpath[u]
     """
 
+    print(len(adj_t[u]),)
+
     possible = True
     ts={}   #start times of modules scheduled in this call
     ts[u]=t_curr
     
     mc=M.copy() #local deep copy of M
     sc=S.copy() #local deep copy of S  
-
     #update s_window upon scheduling critpath[u]
     if prev_mod is not None:
         for i in range(prev_mod.end_t+1 , t_curr):
-            sc[i] += prev_mod.s_window_size()
+            sc[i] += prev_mod.storage()
     
     #update cells ussed by active module upon scheduling critpath[u]
     for t in range(t_curr, t_curr+mod_tab[u].delay):
@@ -97,12 +99,15 @@ def _schedule(u, prev_mod, adj_t, mod_tab, Na, max_t, M, S, next, t_curr):
 
     q = [] #priority queue for requirements
     for v in adj_t[u]:
+        print(v)
         if prev_mod is None or v!=prev_mod.idx:
+            print(mod_tab[v])
             q.append(mod_tab[v])
     heapq.heapify(q)
-
+    print(q)
 
     while len(q)>0:
+
         curr_mod = heapq.heappop(q)
         curr = curr_mod.idx
 
@@ -124,7 +129,7 @@ def _schedule(u, prev_mod, adj_t, mod_tab, Na, max_t, M, S, next, t_curr):
             
 
             #checking  m and s requirements for current module
-            if curr_mod.area() + max(m_window)<=Na and (len(s_window)==0 or curr_mod.s_window_size() + max(s_window)<=Na):
+            if curr_mod.area() + max(m_window)<=Na and (len(s_window)==0 or curr_mod.storage() + max(s_window)<=Na):
                 done = True
                 break
             
@@ -140,7 +145,7 @@ def _schedule(u, prev_mod, adj_t, mod_tab, Na, max_t, M, S, next, t_curr):
             for z in range(t,t+curr_mod.delay):
                 mc[z]+=curr_mod.area()
             for z in range(t+curr_mod.delay , st_next):
-                sc[z]+= curr_mod.s_window_size()
+                sc[z]+= curr_mod.storage()
 
             #push all prerequisits of current module
             for preq in adj_t[curr]:
@@ -172,12 +177,13 @@ def schedule(adj_t, mod_tab, Na, max_t, next):
         tr=max_t-curr_mod.delay
 
         gts={}
-        gmc = []
-        gsc = []
+        gmc = M.copy()
+        gsc = S.copy()
         scheduled_critpath_u = False
         while tr-tl>1:
             tm = (tr+tl)//2
             possible, ts , mc,sc=_schedule(u, prev_mod, adj_t, mod_tab, Na, max_t, M, S, next, tm)
+            print(possible,ts)
             if possible:
                 gts.clear()
                 gts=ts.copy()
@@ -188,7 +194,7 @@ def schedule(adj_t, mod_tab, Na, max_t, next):
                 tl=tm
             sheduled_critpath_u  = scheduled_critpath_u or possible
         
-        scheduled_all = scheduled_all and scheduled_critpath_u
+        scheduled_all = scheduled_all or scheduled_critpath_u
 
         if not scheduled_all:
             return False ,None,None

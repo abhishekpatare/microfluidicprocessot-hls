@@ -9,7 +9,7 @@ from dash import html
 
 # Creating the visual depiction of the schedule using Gantt Chart
 
-schedule = pd.read_csv('timestamps.csv')
+schedule = pd.read_csv('../test/timestamps.csv')
 
 fig1 = ff.create_gantt(schedule, showgrid_x=True, title='Schedule')
 
@@ -19,24 +19,22 @@ fig1.update_xaxes(tick0=0, dtick=1)
 
 # Creating animated scatter line plot to display chip area usage v/s time
 
-t_area = pd.read_csv('storage.csv')
+t_area = pd.read_csv('../test/storage.csv')
 
-tot_area = t_area['M'] + t_area['S']
-t_area['Total Area'] = tot_area
 
-trace1 = go.Scatter(x=t_area['time'], y=t_area['memory'], mode='lines+markers', name='Memory', opacity=0.75)
-trace2 = go.Scatter(x=t_area['time'], y=t_area['storage'], mode='lines+markers', name='Storage', opacity=0.75)
-trace3 = go.Scatter(x=t_area['time'], y=t_area['Total Area'], mode='lines+markers', name='Total Area', opacity=0.5)
+trace1 = go.Scatter(x=t_area['Time'], y=t_area['M'], mode='lines+markers', name='M', opacity=0.75)
+trace2 = go.Scatter(x=t_area['Time'], y=t_area['S'], mode='lines+markers', name='S', opacity=0.75)
+trace3 = go.Scatter(x=t_area['Time'], y=t_area['Total'], mode='lines+markers', name='Total=M+S', opacity=0.5)
 
 frames = [dict(data= [dict(type='scatter',
-                           x=t_area['time'][:k+1],
-                           y=t_area['memory'][:k+1]),
+                           x=t_area['Time'][:k+1],
+                           y=t_area['M'][:k+1]),
                       dict(type='scatter',
-                           x=t_area['time'][:k+1],
-                           y=t_area['storage'][:k+1]),
+                           x=t_area['Time'][:k+1],
+                           y=t_area['S'][:k+1]),
                       dict(type='scatter',
-                           x=t_area['time'][:k+1],
-                           y=t_area['Total Area'][:k+1]),     
+                           x=t_area['Time'][:k+1],
+                           y=t_area['Total'][:k+1]),     
                      ],
                traces= [0, 1, 2],  
               )for k  in  range(1, len(t_area))]
