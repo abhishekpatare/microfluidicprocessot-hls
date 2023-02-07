@@ -21,7 +21,7 @@ fig1.update_xaxes(tick0=0, dtick=1)
 
 t_area = pd.read_csv('storage.csv')
 
-tot_area = t_area['memory'] + t_area['storage']
+tot_area = t_area['M'] + t_area['S']
 t_area['Total Area'] = tot_area
 
 trace1 = go.Scatter(x=t_area['time'], y=t_area['memory'], mode='lines+markers', name='Memory', opacity=0.75)
